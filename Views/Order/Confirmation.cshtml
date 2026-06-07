@@ -1,0 +1,64 @@
+@model MakeupStore.ViewModels.OrderViewModel
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<!-- sectiunea de confirmare comanda -->
+<div class="confirmation-wrapper">
+    <div class="confirmation-card">
+        <!-- icona de succes -->
+        <div class="confirmation-icon">&#10003;</div>
+        <h1 class="confirmation-title">Order Confirmed!</h1>
+        <p class="confirmation-subtitle">Thank you for your purchase. Your order has been received and is being processed.</p>
+
+        <div class="order-number-badge">
+            Order #@Model.Id
+        </div>
+
+        <div class="confirmation-details">
+            <div class="detail-row">
+                <span class="detail-label">Order Date:</span>
+                <span class="detail-value">@Model.OrderDate.ToString("MMMM dd, yyyy")</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="status-badge status-@Model.Status.ToString().ToLower()">@Model.StatusDisplayText</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Shipping To:</span>
+                <span class="detail-value">@Model.ShippingAddress</span>
+            </div>
+        </div>
+
+        <div class="confirmation-divider"></div>
+
+        <!-- lista produselor comandate -->
+        <h3 class="order-items-title">Order Items</h3>
+        <div class="order-items-list">
+            @foreach (var item in Model.Items)
+            {
+                <div class="order-item">
+                    <div class="order-item-info">
+                        <span class="order-item-name">@item.ProductName</span>
+                        <span class="order-item-qty">Qty: @item.Quantity</span>
+                    </div>
+                    <span class="order-item-price">@item.TotalPrice.ToString("0.00") lei</span>
+                </div>
+            }
+        </div>
+
+        <div class="confirmation-divider"></div>
+
+        <!-- totalul comenzii -->
+        <div class="order-total-row">
+            <span>Total Amount</span>
+            <span class="order-total-amount">@Model.TotalAmount.ToString("0.00") lei</span>
+        </div>
+
+        <!-- butoane de actiune -->
+        <div class="confirmation-actions">
+            <a class="btn btn-primary btn-lg" asp-controller="Order" asp-action="History">View My Orders</a>
+            <a class="btn btn-outline btn-lg" asp-controller="Product" asp-action="Index">Continue Shopping</a>
+        </div>
+    </div>
+</div>

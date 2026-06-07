@@ -1,0 +1,67 @@
+@using MakeupStore.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Makeup Store</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+<h1 style="margin: 15px 20px 5px 20px; color: #a85d87;">Makeup Store</h1>
+
+<!-- bara de navigare -->
+<nav>
+    <ul>
+        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li><a asp-controller="Product" asp-action="Index">Products</a></li>
+
+        @if (Context.Session.GetInt32("UserId").HasValue)
+        {
+            <!-- linkuri pentru utilizatorul logat -->
+            <li><a asp-controller="Cart" asp-action="Index">Cart</a></li>
+            <li><a asp-controller="Favorite" asp-action="Index">Favorites</a></li>
+            <li><a asp-controller="Order" asp-action="History">My Orders</a></li>
+
+            @if (Context.Session.GetString("UserRole") == "Admin")
+            {
+                <!-- link admin panel -->
+                <li><a asp-controller="Admin" asp-action="Index">Admin Panel</a></li>
+            }
+
+            <li><a asp-controller="Account" asp-action="Logout">Logout (@Context.Session.GetString("UserName"))</a></li>
+        }
+        else
+        {
+            <!-- linkuri pentru vizitator -->
+            <li><a asp-controller="Account" asp-action="Login">Login</a></li>
+            <li><a asp-controller="Account" asp-action="Register">Register</a></li>
+        }
+    </ul>
+</nav>
+
+<!-- mesaje de succes sau eroare -->
+<div class="flash-messages">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-error">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<!-- continutul paginii -->
+<div class="main-content">
+    @RenderBody()
+</div>
+
+
+
+
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

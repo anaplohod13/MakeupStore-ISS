@@ -1,0 +1,64 @@
+@model MakeupStore.ViewModels.OrderHistoryViewModel
+@{
+    ViewData["Title"] = "Order History";
+}
+
+<div class="page-header">
+    <h1 class="page-title">My Orders</h1>
+    <p class="page-subtitle">Track all your past and current orders</p>
+</div>
+
+@if (!Model.Orders.Any())
+{
+    <!-- nu exista comenzi -->
+    <div class="empty-state">
+        <div class="empty-icon">&#128230;</div>
+        <h3>No orders yet</h3>
+        <p>Start shopping to place your first order!</p>
+        <a class="btn btn-primary btn-lg" asp-controller="Product" asp-action="Index">Browse Products</a>
+    </div>
+}
+else
+{
+    <!-- lista comenzilor utilizatorului -->
+    <div class="orders-list">
+        @foreach (var order in Model.Orders)
+        {
+            <div class="order-card">
+                <div class="order-card-header">
+                    <div class="order-meta">
+                        <h3 class="order-id">Order #@order.Id</h3>
+                        <span class="order-date">@order.OrderDate.ToString("MMMM dd, yyyy")</span>
+                    </div>
+                    <div class="order-status-section">
+                        <span class="status-badge status-@order.Status.ToString().ToLower()">@order.StatusDisplayText</span>
+                        <span class="order-total">@order.TotalAmount.ToString("0.00") lei</span>
+                    </div>
+                </div>
+
+                <div class="order-card-body">
+                    <div class="order-shipping">
+                        <span class="meta-label">Shipped to:</span>
+                        <span>@order.ShippingAddress</span>
+                    </div>
+
+                    <!-- produsele din comanda -->
+                    <div class="order-items-preview">
+                        @foreach (var item in order.Items.Take(3))
+                        {
+                            <div class="order-item-preview">
+                                <span class="order-item-name">@item.ProductName</span>
+                                <span class="order-item-qty">(x@(item.Quantity))</span>
+                                <span class="order-item-price">@item.TotalPrice.ToString("0.00") lei</span>
+                            </div>
+                        }
+                        @if (order.Items.Count() > 3)
+                        {
+                            <p class="more-items">si inca @(order.Items.Count() - 3) produse</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

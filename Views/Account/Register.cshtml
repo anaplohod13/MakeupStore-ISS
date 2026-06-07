@@ -1,0 +1,69 @@
+@model MakeupStore.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<!-- formularul de inregistrare centrat -->
+<div class="auth-card">
+    <h2>Create Account</h2>
+
+    <!-- formularul de inregistrare -->
+    <form asp-controller="Account" asp-action="Register" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- afisam erorile de validare -->
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Errors.Any()))
+        {
+            <div class="alert alert-error">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        <!-- prenume si nume pe aceeasi linie -->
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="FirstName" class="form-label">First Name</label>
+                <input asp-for="FirstName" class="form-control" placeholder="Maria" />
+                <span asp-validation-for="FirstName" class="validation-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="form-label">Last Name</label>
+                <input asp-for="LastName" class="form-control" placeholder="Pop" />
+                <span asp-validation-for="LastName" class="validation-error"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email" class="form-label">Email Address</label>
+            <input asp-for="Email" class="form-control" placeholder="your@email.com" type="email" />
+            <span asp-validation-for="Email" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password" class="form-label">Password</label>
+            <input asp-for="Password" class="form-control" placeholder="Minimum 6 characters" type="password" />
+            <span asp-validation-for="Password" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+            <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat your password" type="password" />
+            <span asp-validation-for="ConfirmPassword" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </div>
+    </form>
+
+    <div class="auth-link">
+        <p>Already have an account? <a asp-controller="Account" asp-action="Login">Login here</a></p>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

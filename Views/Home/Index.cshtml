@@ -1,0 +1,138 @@
+@model IEnumerable<MakeupStore.ViewModels.ProductViewModel>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- carusel cu produsele magazinului - adaptat din lab5 programare web -->
+<h2>Oferte si colectii recomandate</h2>
+
+<div class="carousel-container">
+    <button id="prev-slide" class="carousel-btn">&#60;</button>
+
+    <div id="carousel-slide" class="carousel-slide">
+        <a id="carousel-link" href="#">
+            <div id="carousel-overlay" class="carousel-overlay">
+                <p id="carousel-text"></p>
+            </div>
+        </a>
+    </div>
+
+    <button id="next-slide" class="carousel-btn">&#62;</button>
+</div>
+
+<br>
+
+<!-- categorii rapide -->
+<h2>Categorii de produse</h2>
+<div class="categorii-grid">
+    <a class="categorie-card" asp-controller="Product" asp-action="Index" asp-route-categoryId="1">
+        <h3>Foundation</h3>
+        <p>Fond de ten profesional</p>
+    </a>
+    <a class="categorie-card" asp-controller="Product" asp-action="Index" asp-route-categoryId="2">
+        <h3>Lipstick</h3>
+        <p>Rujuri pentru orice look</p>
+    </a>
+    <a class="categorie-card" asp-controller="Product" asp-action="Index" asp-route-categoryId="3">
+        <h3>Eyeshadow</h3>
+        <p>Palete de farduri</p>
+    </a>
+</div>
+
+<br>
+
+<!-- produse populare -->
+<h2>Produse populare</h2>
+<p><a asp-controller="Product" asp-action="Index">Vezi toate produsele &gt;</a></p>
+
+<div class="container-produse">
+    @foreach (var product in Model)
+    {
+        <!-- cardul fiecarui produs cu imaginea reala -->
+        <div class="card">
+            @if (!string.IsNullOrEmpty(product.ImageUrl))
+            {
+                <img src="@product.ImageUrl" alt="@product.Name" style="width:100%; height:160px; object-fit:contain; background:#fff7fb; border-radius:8px; padding:4px;" />
+            }
+            else
+            {
+                <div class="card-img-placeholder">No image</div>
+            }
+            <span class="badge-categorie">@product.CategoryName</span>
+            <h3>@product.Name</h3>
+            <p>@product.Brand</p>
+            <p class="pret">@product.Price.ToString("0.00") lei</p>
+            <div class="actiuni-card">
+                <a class="btn btn-outline btn-sm" asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">Detalii</a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // datele pentru carusel - aceleasi imagini ca in lab5 programare web
+        const slideuriCarousel = [
+            {
+                link: "/Product",
+                text: "Descopera fondurile de ten profesionale",
+                imagine: "https://media.glamourmagazine.co.uk/photos/68d25f361d85816d5681b9c0/3:2/w_1620,h_1080,c_limit/GLAM-FOUNDATION-MAIN-230925-01.jpg"
+            },
+            {
+                link: "/Product?categoryId=3",
+                text: "Alege palete de farduri pentru orice look",
+                imagine: "https://kyliejennercosmetics.eu/cdn/shop/files/KJC_KSHAD_MKPAL_23_Stylized.jpg?v=1725975763"
+            },
+            {
+                link: "/Product",
+                text: "Fixare perfecta cu pudrele noastre bestseller",
+                imagine: "https://www.byrdie.com/thmb/kB3U7g911x-rPXPUF82Qq0vfc3Y=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Best-Pressed-Powders-Byrdie-Tout-5d3ad474707643dda0c5b036034e3178.jpg"
+            },
+            {
+                link: "/Product",
+                text: "Comanda acum si bucura-te de ofertele speciale",
+                imagine: "https://metro.co.uk/wp-content/uploads/2025/01/SEC_236685304-bd51.jpg?quality=90&strip=all&w=646"
+            }
+        ];
+
+        // logica caruselului - preluata din lab5 programare web
+        document.addEventListener("DOMContentLoaded", function () {
+            const slide = document.getElementById("carousel-slide");
+            const link = document.getElementById("carousel-link");
+            const text = document.getElementById("carousel-text");
+            const butonPrev = document.getElementById("prev-slide");
+            const butonNext = document.getElementById("next-slide");
+
+            let indexCurent = 0;
+
+            function afiseazaSlide(index) {
+                slide.style.backgroundImage = "url('" + slideuriCarousel[index].imagine + "')";
+                link.href = slideuriCarousel[index].link;
+                text.textContent = slideuriCarousel[index].text;
+            }
+
+            function slideUrmator() {
+                indexCurent++;
+                if (indexCurent >= slideuriCarousel.length) {
+                    indexCurent = 0;
+                }
+                afiseazaSlide(indexCurent);
+            }
+
+            function slideAnterior() {
+                indexCurent--;
+                if (indexCurent < 0) {
+                    indexCurent = slideuriCarousel.length - 1;
+                }
+                afiseazaSlide(indexCurent);
+            }
+
+            butonNext.addEventListener("click", function () { slideUrmator(); });
+            butonPrev.addEventListener("click", function () { slideAnterior(); });
+
+            // afisam primul slide si pornim rotatia automata la 3 secunde
+            afiseazaSlide(indexCurent);
+            setInterval(slideUrmator, 3000);
+        });
+    </script>
+}

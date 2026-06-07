@@ -1,0 +1,20 @@
+# Build folders
+bin/
+obj/
+
+# IDE and user-specific files
+*.user
+*.suo
+.idea/
+.vs/
+*.sln.docstates
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# AI generated folders/files (just in case)
+.gemini/
+Diagrame_UML/
+
+# NOTE: makeupstore.db is intentionally NOT ignored so the professor can run the project with existing data.

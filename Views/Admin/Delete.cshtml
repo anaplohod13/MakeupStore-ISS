@@ -1,0 +1,45 @@
+@model MakeupStore.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Delete Product</h1>
+    <p class="page-subtitle">Are you sure you want to delete this product?</p>
+</div>
+
+<div class="delete-confirmation-layout">
+    <!-- detaliile produsului de sters -->
+    <div class="delete-card">
+
+        <div class="delete-product-preview">
+            <div class="delete-product-image">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Name" onerror="this.src='/images/placeholder.jpg'" />
+                }
+                else
+                {
+                    <div class="detail-image-placeholder">&#10022;</div>
+                }
+            </div>
+            <div class="delete-product-info">
+                <span class="product-category">@Model.CategoryName</span>
+                <h2>@Model.Name</h2>
+                <p class="product-brand">@Model.Brand</p>
+                <p class="product-price-large">@Model.Price.ToString("0.00") lei</p>
+                <p>@Model.Description</p>
+                <p class="stock-info">Stock: @Model.StockQuantity units</p>
+            </div>
+        </div>
+
+        <!-- butoanele de confirmare si anulare -->
+        <div class="delete-actions">
+            <form asp-controller="Admin" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger btn-lg">Yes, Delete Product</button>
+            </form>
+            <a class="btn btn-outline btn-lg" asp-controller="Admin" asp-action="Index">Cancel</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+@model MakeupStore.ViewModels.FavoriteViewModel
+@{
+    ViewData["Title"] = "My Favorites";
+}
+
+<h2>My Favorites</h2>
+<p class="text-muted">@Model.Count saved product@(Model.Count != 1 ? "s" : "")</p>
+
+@if (Model.IsEmpty)
+{
+    <!-- nu sunt favorite salvate -->
+    <div class="mesaj-gol">
+        <p>No favorites yet. <a asp-controller="Product" asp-action="Index">Explore products</a> and save the ones you like.</p>
+    </div>
+}
+else
+{
+    <!-- cardurile cu produsele favorite -->
+    <div class="container-produse">
+        @foreach (var item in Model.Favorites)
+        {
+            <div class="card">
+                <!-- imaginea produsului din favorite -->
+                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                {
+                    <img src="@item.ImageUrl" alt="@item.ProductName" style="width:100%; height:130px; object-fit:cover; border-radius:8px;" />
+                }
+                else
+                {
+                    <div class="card-img-placeholder">No image</div>
+                }
+
+                <span class="badge-categorie">@item.CategoryName</span>
+                <h3>@item.ProductName</h3>
+                <p>@item.ProductBrand</p>
+                <p class="pret">@item.Price.ToString("0.00") lei</p>
+                <p class="text-muted">Saved: @item.SavedAt.ToString("MMM dd, yyyy")</p>
+
+                <div class="actiuni-card">
+                    <a class="btn btn-outline btn-sm" asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId">Details</a>
+
+                    @if (item.IsInStock)
+                    {
+                        <!-- adaugare in cos din favorite -->
+                        <form method="post" asp-controller="Cart" asp-action="AddToCart" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                        </form>
+                    }
+
+                    <!-- stergere din favorite -->
+                    <form method="post" asp-controller="Favorite" asp-action="Remove" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@item.ProductId" />
+                        <input type="hidden" name="returnUrl" value="/Favorite" />
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}

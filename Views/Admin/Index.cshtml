@@ -1,0 +1,59 @@
+@model IEnumerable<MakeupStore.ViewModels.ProductViewModel>
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="admin-header">
+    <h2>Admin Panel - Product Management</h2>
+    <a class="btn btn-primary" asp-controller="Admin" asp-action="Create">+ Add New Product</a>
+</div>
+
+<p class="text-muted">@Model.Count() product@(Model.Count() != 1 ? "s" : "") in store</p>
+
+@if (!Model.Any())
+{
+    <p>No products yet. <a asp-controller="Admin" asp-action="Create">Add your first product</a>.</p>
+}
+else
+{
+    <!-- tabelul cu toate produsele -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Id</td>
+                    <td><strong>@product.Name</strong></td>
+                    <td>@product.Brand</td>
+                    <td>@product.CategoryName</td>
+                    <td>@product.Price.ToString("0.00") lei</td>
+                    <td>
+                        @if (product.StockQuantity > 0)
+                        {
+                            <span style="color: green;">@product.StockQuantity</span>
+                        }
+                        else
+                        {
+                            <span style="color: red;">Out of Stock</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-outline btn-sm" asp-controller="Admin" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
+                        <a class="btn btn-danger btn-sm" asp-controller="Admin" asp-action="Delete" asp-route-id="@product.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

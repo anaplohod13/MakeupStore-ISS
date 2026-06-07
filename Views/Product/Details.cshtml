@@ -1,0 +1,99 @@
+@model MakeupStore.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<!-- breadcrumb simplu -->
+<p>
+    <a asp-controller="Home" asp-action="Index">Home</a> &gt;
+    <a asp-controller="Product" asp-action="Index">Products</a> &gt;
+    @Model.Name
+</p>
+
+<hr>
+
+<!-- detaliile produsului -->
+<div class="product-details">
+
+    <!-- imaginea produsului -->
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" alt="@Model.Name" style="width:200px; height:200px; object-fit:contain; background:#fff7fb; border-radius:8px; padding:8px; border:1px solid #e0c2d3;" />
+    }
+    else
+    {
+        <div class="product-details-img-placeholder">No image</div>
+    }
+
+    <!-- informatiile produsului -->
+    <div class="product-details-info">
+        <span class="badge-categorie">@Model.CategoryName</span>
+        <h1>@Model.Name</h1>
+        <p class="brand">Brand: <strong>@Model.Brand</strong></p>
+        <p class="pret-mare">@Model.Price.ToString("0.00") lei</p>
+
+        <!-- statusul stocului -->
+        @if (Model.IsInStock)
+        {
+            <p class="stoc stoc-ok">In Stock (@Model.StockQuantity available)</p>
+        }
+        else
+        {
+            <p class="stoc stoc-lipsa">Out of Stock</p>
+        }
+
+        <hr>
+        <h3>Description</h3>
+        <p>@Model.Description</p>
+        <hr>
+
+        <!-- actiunile produsului -->
+        @if (Context.Session.GetInt32("UserId").HasValue)
+        {
+            @if (Model.IsInStock)
+            {
+                <!-- formularul de adaugare in cos -->
+                <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <div class="form-group">
+                        <label class="form-label">Quantity:</label>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" max="@Model.StockQuantity" class="quantity-input" />
+                    </div>
+                    <div class="product-actions-detail">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </div>
+                </form>
+            }
+
+            <div class="mt-3">
+                @if (Model.IsFavorite)
+                {
+                    <form method="post" asp-controller="Favorite" asp-action="Remove">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="returnUrl" value="/Product/Details/@Model.Id" />
+                        <button type="submit" class="btn btn-outline">&#9829; Remove from Favorites</button>
+                    </form>
+                }
+                else
+                {
+                    <form method="post" asp-controller="Favorite" asp-action="Add">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="returnUrl" value="/Product/Details/@Model.Id" />
+                        <button type="submit" class="btn btn-outline">&#9825; Save to Favorites</button>
+                    </form>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- utilizatorul nu e logat -->
+            <p>Please <a asp-controller="Account" asp-action="Login">login</a> to add to cart or save to favorites.</p>
+        }
+    </div>
+</div>
+
+<br>
+<a class="btn btn-outline" asp-controller="Product" asp-action="Index">&larr; Back to Products</a>
